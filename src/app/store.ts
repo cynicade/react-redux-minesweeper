@@ -1,9 +1,15 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import counterReducer from "../features/counter/counterSlice";
+import gameReducer from "./gameSlice";
+import gameMiddleware from "./gameMiddleware";
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
+    game: gameReducer,
+  },
+  middleware: (getDefaultMiddleware) => {
+    return getDefaultMiddleware().concat([gameMiddleware]);
   },
 });
 
