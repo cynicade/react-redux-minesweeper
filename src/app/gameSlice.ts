@@ -1,5 +1,5 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Cell, Difficulty, Grid } from "./Grid";
+import { Difficulty, Grid } from "./Grid";
 import { RootState } from "./store";
 
 export interface GameState {
