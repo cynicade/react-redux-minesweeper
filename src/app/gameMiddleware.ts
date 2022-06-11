@@ -14,7 +14,7 @@ const gameMiddleware: Middleware = (store) => {
       socket = io(process.env.REACT_APP_SOCKET_URL);
       socket.on("connect", () => {
         store.dispatch(gameActions.connectionEstablished());
-        socket.emit(gameEvents.PlayerJoined, "beginner");
+        socket.emit(gameEvents.PlayerJoined, store.getState().game.difficulty);
       });
       socket.on(gameEvents.NewGrid, (grid: Grid) => {
         store.dispatch(gameActions.gotGrid({ grid }));

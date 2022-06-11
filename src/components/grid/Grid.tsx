@@ -46,6 +46,17 @@ export const Grid: React.FC = (): JSX.Element => {
         </Typography>
       </div>
     );
+  if (gameState === "win")
+    return (
+      <div>
+        <Typography variant="h5" textAlign="center">
+          {connection}
+        </Typography>
+        <Typography variant="h1" textAlign="center">
+          NICE
+        </Typography>
+      </div>
+    );
   return (
     <div>
       <Typography variant="h5" textAlign="center">

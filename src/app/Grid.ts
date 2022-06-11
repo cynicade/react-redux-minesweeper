@@ -5,6 +5,8 @@ export interface Cell {
   flag: boolean;
 }
 
+export type Difficulty = "beginner" | "intermediate" | "expert";
+
 export interface Grid {
   sizeX: number;
   sizeY: number;
