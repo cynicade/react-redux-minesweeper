@@ -1,56 +1,48 @@
 import React from "react";
 
 import { useAppSelector, useAppDispatch } from "./app/hooks";
-import { gameActions } from "./app/gameSlice";
+import { gameActions, selectGameDifficulty } from "./app/gameSlice";
 import { Grid } from "./components/grid/Grid";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
 import "./App.css";
 import { Difficulty } from "./app/Grid";
+import { Button, Container, Grid as Flex } from "@mui/material";
+import { Settings } from "./components/settings/Settings";
 
-function App() {
-  const [diff, setDiff] = React.useState<string>("beginner");
+const App: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
+  const diff: Difficulty | null = useAppSelector(selectGameDifficulty);
+
+  if (diff === null) return <Settings />;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <FormControl>
-        <FormLabel id="demo-radio-buttons-group-label">Difficulty</FormLabel>
-        <RadioGroup
-          aria-labelledby="demo-radio-buttons-group-label"
-          name="radio-buttons-group"
-          value={diff}
-          onChange={(e) => setDiff(e.target.value)}
-        >
-          <FormControlLabel
-            value="beginner"
-            control={<Radio />}
-            label="Beginner"
-          />
-          <FormControlLabel
-            value="intermediate"
-            control={<Radio />}
-            label="Intermediate"
-          />
-          <FormControlLabel value="expert" control={<Radio />} label="Expert" />
-        </RadioGroup>
-      </FormControl>
-      <button
-        onClick={() =>
-          dispatch(gameActions.startConnecting({ difficulty: diff }))
-        }
-      >
-        Connect
-      </button>
-      <button onClick={() => dispatch(gameActions.terminateConnection())}>
-        Disconnect
-      </button>
-      <Grid />
-    </div>
+    <Container maxWidth="lg">
+      <Flex container flexDirection="row">
+        <Flex item>
+          <Button
+            variant="contained"
+            onClick={() =>
+              dispatch(gameActions.startConnecting({ difficulty: diff }))
+            }
+          >
+            Connect
+          </Button>
+        </Flex>
+        <Flex item>
+          <Button
+            variant="contained"
+            onClick={() => dispatch(gameActions.terminateConnection())}
+          >
+            Disconnect
+          </Button>
+        </Flex>
+      </Flex>
+      <Flex container justifyContent="center" alignItems="center">
+        <Flex item>
+          <Grid />
+        </Flex>
+      </Flex>
+    </Container>
   );
-}
+};
 
 export default App;

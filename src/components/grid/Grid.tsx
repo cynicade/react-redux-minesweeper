@@ -42,7 +42,7 @@ export const Grid: React.FC = (): JSX.Element => {
           {connection}
         </Typography>
         <Typography variant="h1" textAlign="center">
-          GET FUCKED LOL
+          You lost
         </Typography>
       </div>
     );
@@ -53,7 +53,7 @@ export const Grid: React.FC = (): JSX.Element => {
           {connection}
         </Typography>
         <Typography variant="h1" textAlign="center">
-          NICE
+          You won
         </Typography>
       </div>
     );
