@@ -3,7 +3,7 @@
 import React from "react";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import FlagIcon from "@mui/icons-material/Flag";
-import Icon from "@mui/material/Icon";
+import { Icon } from "@mui/material";
 import { css, jsx } from "@emotion/react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { gameActions, selectCells } from "../../app/gameSlice";
@@ -25,12 +25,11 @@ export const Cell: React.FC<PropsType> = ({
   const cells = useAppSelector(selectCells);
   const cellStyles = css({
     display: "flex",
-    justifyContent: "cneter",
+    justifyContent: "center",
     alignItems: "center",
     height: "100%",
     width: "100%",
     border: "1px solid #BBB",
-    "&:hover": { backgroundColor: "#fff" },
   });
 
   if (cells && cells[y][x].open)
@@ -49,7 +48,12 @@ export const Cell: React.FC<PropsType> = ({
   return (
     <div css={cellStyles}>
       <button
-        css={{ width: "100%", height: "100%" }}
+        css={{
+          width: "100%",
+          height: "100%",
+          backgroundColor: "eeeeee",
+          border: "none",
+        }}
         onClick={() => dispatch(gameActions.openCell({ y, x }))}
         onContextMenu={(e) => {
           e.preventDefault();

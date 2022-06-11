@@ -20,17 +20,18 @@ export const Grid: React.FC = (): JSX.Element => {
   const gridStyles = css({
     listStyleType: "none",
     display: "inline-grid",
-    padding: "10px",
-    gridTemplateColumns: `repeat(${grid && grid.sizeX}, 50px)`,
-    gridTemplateRows: `repeat(${grid && grid.sizeY}, 50px)`,
-    gap: "4px",
+    padding: "1em",
+    gridTemplateColumns: `repeat(${grid && grid.sizeX}, 40px)`,
+    gridTemplateRows: `repeat(${grid && grid.sizeY}, 40px)`,
+    gap: "3px",
     backgroundColor: "#efefef",
+    borderRadius: "5px",
   });
 
   if (connection !== "connection established")
     return (
       <div>
-        <Typography variant="h5" textAlign="center">
+        <Typography variant="h5" textAlign="center" color="secondary">
           {connection}
         </Typography>
       </div>
@@ -38,10 +39,10 @@ export const Grid: React.FC = (): JSX.Element => {
   if (gameState === "loss")
     return (
       <div>
-        <Typography variant="h5" textAlign="center">
+        <Typography variant="h5" textAlign="center" color="secondary">
           {connection}
         </Typography>
-        <Typography variant="h1" textAlign="center">
+        <Typography variant="h1" textAlign="center" color="secondary">
           You lost
         </Typography>
       </div>
@@ -49,17 +50,17 @@ export const Grid: React.FC = (): JSX.Element => {
   if (gameState === "win")
     return (
       <div>
-        <Typography variant="h5" textAlign="center">
+        <Typography variant="h5" textAlign="center" color="secondary">
           {connection}
         </Typography>
-        <Typography variant="h1" textAlign="center">
+        <Typography variant="h1" textAlign="center" color="secondary">
           You won
         </Typography>
       </div>
     );
   return (
     <div>
-      <Typography variant="h5" textAlign="center">
+      <Typography variant="h5" textAlign="center" color="secondary">
         {connection}
       </Typography>
       <ul css={gridStyles}>
