@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Cell, Difficulty, Grid } from "./Grid";
 import { RootState } from "./store";
 
@@ -122,6 +122,8 @@ export const gameSlice = createSlice({
   },
 });
 
+const getNewGrid = createAction("game/get_new_grid");
+
 export const selectConnectionStatus = (state: RootState) =>
   state.game.connectionStatus;
 export const selectGrid = (state: RootState) => state.game.grid;
@@ -129,5 +131,5 @@ export const selectCells = (state: RootState) =>
   state.game.grid ? state.game.grid.cells : null;
 export const selectGameState = (state: RootState) => state.game.gameStatus;
 export const selectGameDifficulty = (state: RootState) => state.game.difficulty;
-export const gameActions = gameSlice.actions;
+export const gameActions = { ...gameSlice.actions, getNewGrid };
 export default gameSlice.reducer;

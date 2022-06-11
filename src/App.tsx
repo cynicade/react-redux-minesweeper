@@ -35,6 +35,14 @@ const App: React.FC = (): JSX.Element => {
             Disconnect
           </Button>
         </Flex>
+        <Flex item>
+          <Button
+            variant="contained"
+            onClick={() => dispatch(gameActions.getNewGrid())}
+          >
+            New Grid
+          </Button>
+        </Flex>
       </Flex>
       <Flex container justifyContent="center" alignItems="center">
         <Flex item>
