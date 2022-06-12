@@ -1,18 +1,22 @@
 import React from "react";
 
 import { useAppSelector, useAppDispatch } from "./app/hooks";
-import { gameActions, selectGameDifficulty } from "./app/gameSlice";
-import { Grid } from "./components/grid/Grid";
-import "./App.css";
+import {
+  gameActions,
+  selectConnectionStatus,
+  selectGameDifficulty,
+} from "./app/gameSlice";
 import theme from "./components/styles/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Difficulty } from "./app/Grid";
 import { Button, Container, Grid as Flex, ThemeProvider } from "@mui/material";
 import { Settings } from "./components/settings/Settings";
+import { Game } from "./components/game/Game";
 
 const App: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const diff: Difficulty | null = useAppSelector(selectGameDifficulty);
+  const conn: string = useAppSelector(selectConnectionStatus);
 
   if (diff === null)
     return (
@@ -26,37 +30,26 @@ const App: React.FC = (): JSX.Element => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container maxWidth="xl">
-        <Flex container flexDirection="row">
-          <Flex item>
-            <Button
-              variant="contained"
-              onClick={() =>
-                dispatch(gameActions.startConnecting({ difficulty: diff }))
-              }
-            >
-              Connect
-            </Button>
-          </Flex>
-          <Flex item>
-            <Button
-              variant="contained"
-              onClick={() => dispatch(gameActions.terminateConnection())}
-            >
-              Disconnect
-            </Button>
-          </Flex>
-          <Flex item>
-            <Button
-              variant="contained"
-              onClick={() => dispatch(gameActions.getNewGrid())}
-            >
-              New Grid
-            </Button>
-          </Flex>
-        </Flex>
+        {conn === "waiting" ? (
+          <Button
+            variant="contained"
+            onClick={() =>
+              dispatch(gameActions.startConnecting({ difficulty: diff }))
+            }
+          >
+            Connect
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            onClick={() => dispatch(gameActions.terminateConnection())}
+          >
+            Disconnect
+          </Button>
+        )}
         <Flex container justifyContent="center" alignItems="center">
           <Flex item>
-            <Grid />
+            <Game />
           </Flex>
         </Flex>
       </Container>
