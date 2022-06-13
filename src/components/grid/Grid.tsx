@@ -3,7 +3,7 @@
 import React from "react";
 import { selectGrid } from "../game/gameSlice";
 import { useAppSelector } from "../../app/hooks";
-import { Cell as ICell } from "./grid";
+import { ICell } from "../../types";
 import { Cell } from "../cell/Cell";
 import { css, jsx } from "@emotion/react"; // need jsx for pragma
 import { Typography } from "@mui/material";

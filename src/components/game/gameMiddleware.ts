@@ -2,7 +2,7 @@ import { Middleware } from "redux";
 import { Socket, io } from "socket.io-client";
 import { gameActions } from "./gameSlice";
 import gameEvents from "./gameEvents";
-import { Grid } from "../grid/grid";
+import { IGrid } from "../../types";
 
 const gameMiddleware: Middleware = (store) => {
   let socket: Socket;
@@ -22,7 +22,7 @@ const gameMiddleware: Middleware = (store) => {
       socket.on("connect", () => {
         store.dispatch(gameActions.connectionEstablished());
       });
-      socket.on(gameEvents.NewGrid, (grid: Grid) => {
+      socket.on(gameEvents.NewGrid, (grid: IGrid) => {
         store.dispatch(gameActions.gotGrid({ grid }));
       });
     }

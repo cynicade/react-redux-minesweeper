@@ -1,14 +1,16 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Difficulty, Grid } from "../grid/grid";
+import { IGrid, ITime, Difficulty } from "../../types";
 import { RootState } from "../../app/store";
 
 export interface GameState {
   connectionStatus: "waiting" | "connecting" | "connection established";
-  grid: Grid | null;
-  gameStatus: "loss" | "win" | "in progress" | null;
+  grid: IGrid | null;
+  gameStatus: "loss" | "win" | "idle" | "in progress" | null;
   difficulty: Difficulty | null;
   openedCellCount: number | null;
   flaggedCellCount: number | null;
+  startTime: number | null;
+  totalTime: ITime | null;
 }
 
 const initialState: GameState = {
@@ -18,6 +20,22 @@ const initialState: GameState = {
   difficulty: null,
   openedCellCount: null,
   flaggedCellCount: null,
+  startTime: null,
+  totalTime: null,
+};
+
+const stopTimer = (startTime: number): ITime => {
+  const totalMs = Date.now() - startTime; // total time in ms
+  const getTotalTime = (ms: number): ITime => {
+    const time: ITime = {
+      minutes: Math.floor(totalMs / 60000),
+      seconds: Math.floor((ms / 1000) % 60),
+      millis: ms % 1000,
+    };
+    return time;
+  };
+
+  return getTotalTime(totalMs);
 };
 
 export const gameSlice = createSlice({
@@ -33,9 +51,9 @@ export const gameSlice = createSlice({
     terminateConnection: (state) => {
       state.connectionStatus = "waiting";
     },
-    gotGrid: (state, action: PayloadAction<{ grid: Grid }>) => {
+    gotGrid: (state, action: PayloadAction<{ grid: IGrid }>) => {
       state.grid = action.payload.grid;
-      state.gameStatus = "in progress";
+      state.gameStatus = "idle";
       state.openedCellCount = 0;
       state.flaggedCellCount = 0;
     },
@@ -48,6 +66,10 @@ export const gameSlice = createSlice({
       state.difficulty = action.payload.difficulty;
     },
     openCell: (state, action: PayloadAction<{ x: number; y: number }>) => {
+      if (state.gameStatus === "idle") {
+        state.startTime = Date.now();
+        state.gameStatus = "in progress";
+      }
       if (state.grid && state.grid.cells) {
         const x = action.payload.x;
         const y = action.payload.y;
@@ -104,8 +126,10 @@ export const gameSlice = createSlice({
             state.openedCellCount ===
               state.grid.sizeX * state.grid.sizeY - state.flaggedCellCount &&
             state.flaggedCellCount === state.grid.mines
-          )
+          ) {
+            state.startTime && (state.totalTime = stopTimer(state.startTime));
             state.gameStatus = "win";
+          }
       }
     },
     flagCell: (state, action: PayloadAction<{ x: number; y: number }>) => {
@@ -121,8 +145,10 @@ export const gameSlice = createSlice({
             state.openedCellCount ===
               state.grid.sizeX * state.grid.sizeY - state.flaggedCellCount &&
             state.flaggedCellCount === state.grid.mines
-          )
+          ) {
+            state.startTime && (state.totalTime = stopTimer(state.startTime));
             state.gameStatus = "win";
+          }
       }
     },
     resetDifficulty: (state) => {
@@ -137,9 +163,11 @@ const getNewGrid = createAction("game/get_new_grid");
 export const selectConnectionStatus = (state: RootState) =>
   state.game.connectionStatus;
 export const selectGrid = (state: RootState) => state.game.grid;
-export const selectCells = (state: RootState) =>
-  state.game.grid ? state.game.grid.cells : null;
+export const selectCells = (state: RootState) => state.game.grid?.cells;
 export const selectGameState = (state: RootState) => state.game.gameStatus;
 export const selectGameDifficulty = (state: RootState) => state.game.difficulty;
+export const selectTotalTime = (state: RootState) => state.game.totalTime;
+export const selectMines = (state: RootState) => state.game.grid?.mines;
+export const selectFlagged = (state: RootState) => state.game.flaggedCellCount;
 export const gameActions = { ...gameSlice.actions, getNewGrid };
 export default gameSlice.reducer;

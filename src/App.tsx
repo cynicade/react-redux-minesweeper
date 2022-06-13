@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from "./app/hooks";
 import { gameActions, selectGameDifficulty } from "./components/game/gameSlice";
 import theme from "./components/styles/theme";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Difficulty } from "./components/grid/grid";
+import { Difficulty } from "./types";
 import { Box, Button, Container, ThemeProvider } from "@mui/material";
 import { Settings } from "./components/settings/Settings";
 import { Game } from "./components/game/Game";
