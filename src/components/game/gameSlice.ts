@@ -84,12 +84,24 @@ export const gameSlice = createSlice({
           }
         };
 
+        const showAllMines = (): void => {
+          state.grid &&
+            state.grid.cells.map((row) =>
+              row.map((cell) => {
+                if (cell.mine) cell.open = true;
+              })
+            );
+        };
+
         state.grid.cells[y][x].open = true;
         if (state.openedCellCount !== null) state.openedCellCount += 1;
         if (state.flaggedCellCount !== null && state.grid.cells[y][x].flag)
           state.flaggedCellCount -= 1;
 
-        if (state.grid.cells[y][x].mine) state.gameStatus = "loss";
+        if (state.grid.cells[y][x].mine) {
+          state.gameStatus = "loss";
+          showAllMines();
+        }
         if (state.grid.cells[y][x].counter === 0) {
           openCellsAround(y, x);
         }

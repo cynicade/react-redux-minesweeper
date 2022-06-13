@@ -5,7 +5,7 @@ import {
   selectGameState,
 } from "./gameSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Button, Typography, Grid as Flex } from "@mui/material";
+import { Button, Typography, Grid as Flex, Box } from "@mui/material";
 import { Grid } from "../grid/Grid";
 
 export const Game: React.FC = (): JSX.Element => {
@@ -27,9 +27,14 @@ export const Game: React.FC = (): JSX.Element => {
       <Flex container flexDirection="column" alignItems="center">
         <Flex item>
           <Typography variant="h1" textAlign="center" color="secondary">
-            {gameState === "loss" ? "You lost" : "You won"}
+            {gameState === "loss" ? "You lost" : "You won!"}
           </Typography>
         </Flex>
+        {gameState === "loss" && (
+          <Flex item>
+            <Grid />
+          </Flex>
+        )}
         <Flex item marginTop="2em">
           <Button
             variant="contained"
