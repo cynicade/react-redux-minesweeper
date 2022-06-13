@@ -87,7 +87,7 @@ export const gameSlice = createSlice({
         const showAllMines = (): void => {
           state.grid &&
             state.grid.cells.map((row) =>
-              row.map((cell) => {
+              row.forEach((cell) => {
                 if (cell.mine) cell.open = true;
               })
             );

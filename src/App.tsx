@@ -9,13 +9,7 @@ import {
 import theme from "./components/styles/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Difficulty } from "./components/grid/grid";
-import {
-  Box,
-  Button,
-  Container,
-  Grid as Flex,
-  ThemeProvider,
-} from "@mui/material";
+import { Box, Button, Container, ThemeProvider } from "@mui/material";
 import { Settings } from "./components/settings/Settings";
 import { Game } from "./components/game/Game";
 

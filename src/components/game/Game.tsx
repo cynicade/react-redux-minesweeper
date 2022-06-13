@@ -5,7 +5,7 @@ import {
   selectGameState,
 } from "./gameSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Button, Typography, Grid as Flex, Box } from "@mui/material";
+import { Button, Typography, Grid as Flex } from "@mui/material";
 import { Grid } from "../grid/Grid";
 
 export const Game: React.FC = (): JSX.Element => {
