@@ -104,7 +104,7 @@ export const gameSlice = createSlice({
           state.grid &&
             state.grid.cells.map((row) =>
               row.forEach((cell) => {
-                if (cell.mine) cell.open = true;
+                if (cell.mine && !cell.flag) cell.open = true;
               })
             );
         };
