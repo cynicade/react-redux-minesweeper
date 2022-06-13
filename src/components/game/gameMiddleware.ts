@@ -21,7 +21,6 @@ const gameMiddleware: Middleware = (store) => {
         });
       socket.on("connect", () => {
         store.dispatch(gameActions.connectionEstablished());
-        socket.emit(gameEvents.RequestGrid, store.getState().game.difficulty);
       });
       socket.on(gameEvents.NewGrid, (grid: Grid) => {
         store.dispatch(gameActions.gotGrid({ grid }));

@@ -24,14 +24,8 @@ export const gameSlice = createSlice({
   name: "game",
   initialState,
   reducers: {
-    startConnecting: (
-      state,
-      action: PayloadAction<{
-        difficulty: Difficulty;
-      }>
-    ) => {
+    startConnecting: (state) => {
       state.connectionStatus = "connecting";
-      state.difficulty = action.payload.difficulty;
     },
     connectionEstablished: (state) => {
       state.connectionStatus = "connection established";
@@ -130,6 +124,10 @@ export const gameSlice = createSlice({
           )
             state.gameStatus = "win";
       }
+    },
+    resetDifficulty: (state) => {
+      state.difficulty = null;
+      state.grid = null;
     },
   },
 });

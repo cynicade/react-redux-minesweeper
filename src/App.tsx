@@ -1,11 +1,7 @@
 import React from "react";
 
 import { useAppSelector, useAppDispatch } from "./app/hooks";
-import {
-  gameActions,
-  selectConnectionStatus,
-  selectGameDifficulty,
-} from "./components/game/gameSlice";
+import { gameActions, selectGameDifficulty } from "./components/game/gameSlice";
 import theme from "./components/styles/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Difficulty } from "./components/grid/grid";
@@ -16,7 +12,13 @@ import { Game } from "./components/game/Game";
 const App: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const diff: Difficulty | null = useAppSelector(selectGameDifficulty);
-  const conn: string = useAppSelector(selectConnectionStatus);
+
+  React.useEffect(() => {
+    dispatch(gameActions.startConnecting());
+    return () => {
+      dispatch(gameActions.terminateConnection());
+    };
+  }, [dispatch]);
 
   if (diff === null)
     return (
@@ -32,18 +34,14 @@ const App: React.FC = (): JSX.Element => {
       <Container maxWidth="xl" sx={{ height: "100vh" }}>
         <Button
           variant="contained"
-          onClick={() =>
-            conn === "waiting"
-              ? dispatch(gameActions.startConnecting({ difficulty: diff }))
-              : dispatch(gameActions.terminateConnection())
-          }
+          onClick={() => dispatch(gameActions.resetDifficulty())}
           sx={{
             position: "absolute",
             right: "1em",
             marginY: "1em",
           }}
         >
-          {conn === "waiting" ? "Connect" : "Disconnect"}
+          Change Difficulty
         </Button>
         <Box
           component="div"

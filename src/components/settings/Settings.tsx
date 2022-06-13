@@ -27,9 +27,12 @@ export const Settings: React.FC = (): JSX.Element => {
         <Grid item margin="1em">
           <Button
             variant="contained"
-            onClick={() =>
-              dispatch(gameActions.selectDifficulty({ difficulty: "beginner" }))
-            }
+            onClick={() => {
+              dispatch(
+                gameActions.selectDifficulty({ difficulty: "beginner" })
+              );
+              dispatch(gameActions.getNewGrid());
+            }}
           >
             Beginner
           </Button>
@@ -37,11 +40,12 @@ export const Settings: React.FC = (): JSX.Element => {
         <Grid item margin="1em">
           <Button
             variant="contained"
-            onClick={() =>
+            onClick={() => {
               dispatch(
                 gameActions.selectDifficulty({ difficulty: "intermediate" })
-              )
-            }
+              );
+              dispatch(gameActions.getNewGrid());
+            }}
           >
             Intermediate
           </Button>
@@ -49,9 +53,10 @@ export const Settings: React.FC = (): JSX.Element => {
         <Grid item margin="1em">
           <Button
             variant="contained"
-            onClick={() =>
-              dispatch(gameActions.selectDifficulty({ difficulty: "expert" }))
-            }
+            onClick={() => {
+              dispatch(gameActions.selectDifficulty({ difficulty: "expert" }));
+              dispatch(gameActions.getNewGrid());
+            }}
           >
             Expert
           </Button>
