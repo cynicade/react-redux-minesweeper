@@ -13,7 +13,11 @@ export const Settings: React.FC = (): JSX.Element => {
         flexDirection="row"
         justifyContent="center"
         alignItems="center"
-        marginTop={"40%"}
+        marginY="auto"
+        position="absolute"
+        top="50%"
+        left="50%"
+        sx={{ transform: "translate(-50%, -50%)" }}
       >
         <Grid item xs={12}>
           <Typography variant="h4" textAlign="center" color="secondary">

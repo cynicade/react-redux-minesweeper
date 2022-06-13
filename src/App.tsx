@@ -9,7 +9,13 @@ import {
 import theme from "./components/styles/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Difficulty } from "./components/grid/grid";
-import { Button, Container, Grid as Flex, ThemeProvider } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid as Flex,
+  ThemeProvider,
+} from "@mui/material";
 import { Settings } from "./components/settings/Settings";
 import { Game } from "./components/game/Game";
 
@@ -29,29 +35,32 @@ const App: React.FC = (): JSX.Element => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="xl">
-        {conn === "waiting" ? (
-          <Button
-            variant="contained"
-            onClick={() =>
-              dispatch(gameActions.startConnecting({ difficulty: diff }))
-            }
-          >
-            Connect
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            onClick={() => dispatch(gameActions.terminateConnection())}
-          >
-            Disconnect
-          </Button>
-        )}
-        <Flex container justifyContent="center" alignItems="center">
-          <Flex item>
-            <Game />
-          </Flex>
-        </Flex>
+      <Container maxWidth="xl" sx={{ height: "100vh" }}>
+        <Button
+          variant="contained"
+          onClick={() =>
+            conn === "waiting"
+              ? dispatch(gameActions.startConnecting({ difficulty: diff }))
+              : dispatch(gameActions.terminateConnection())
+          }
+          sx={{
+            position: "absolute",
+            right: "1em",
+            marginY: "1em",
+          }}
+        >
+          {conn === "waiting" ? "Connect" : "Disconnect"}
+        </Button>
+        <Box
+          component="div"
+          m="1"
+          position="absolute"
+          top="50%"
+          left="50%"
+          sx={{ transform: "translate(-50%, -50%)" }}
+        >
+          <Game />
+        </Box>
       </Container>
     </ThemeProvider>
   );
