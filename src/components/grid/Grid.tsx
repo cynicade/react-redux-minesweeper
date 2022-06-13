@@ -1,9 +1,9 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
 import React from "react";
-import { selectGrid } from "../../app/gameSlice";
+import { selectGrid } from "../game/gameSlice";
 import { useAppSelector } from "../../app/hooks";
-import { Cell as ICell } from "../../app/Grid";
+import { Cell as ICell } from "./grid";
 import { Cell } from "../cell/Cell";
 import { css, jsx } from "@emotion/react"; // need jsx for pragma
 import { Typography } from "@mui/material";
@@ -13,7 +13,7 @@ export const Grid: React.FC = (): JSX.Element => {
 
   if (!grid)
     return (
-      <Typography variant="h6" textAlign="center">
+      <Typography variant="h5" textAlign="center" color="secondary">
         Loading...
       </Typography>
     );

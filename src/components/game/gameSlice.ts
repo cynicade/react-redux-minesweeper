@@ -1,6 +1,6 @@
 import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Difficulty, Grid } from "./Grid";
-import { RootState } from "./store";
+import { Difficulty, Grid } from "../grid/grid";
+import { RootState } from "../../app/store";
 
 export interface GameState {
   connectionStatus: "waiting" | "connecting" | "connection established";

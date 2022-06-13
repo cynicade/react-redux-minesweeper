@@ -1,8 +1,8 @@
 import { Middleware } from "redux";
-import { io, Socket } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import { gameActions } from "./gameSlice";
 import gameEvents from "./gameEvents";
-import { Grid } from "./Grid";
+import { Grid } from "../grid/grid";
 
 const gameMiddleware: Middleware = (store) => {
   let socket: Socket;
@@ -11,7 +11,14 @@ const gameMiddleware: Middleware = (store) => {
       socket &&
       store.getState().game.connectionStatus === "connection established";
     if (gameActions.startConnecting.match(action)) {
-      socket = io(process.env.REACT_APP_SOCKET_URL);
+      if (process.env.NODE_ENV === "development")
+        socket = io(process.env.REACT_APP_SOCKET_URL_LOCAL, {
+          path: process.env.REACT_APP_SOCKET_PATH_LOCAL,
+        });
+      else
+        socket = io(process.env.REACT_APP_SOCKET_URL, {
+          path: process.env.REACT_APP_SOCKET_PATH,
+        });
       socket.on("connect", () => {
         store.dispatch(gameActions.connectionEstablished());
         socket.emit(gameEvents.RequestGrid, store.getState().game.difficulty);

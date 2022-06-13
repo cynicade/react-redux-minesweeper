@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build & scp -r ./build cyn@cynicade.xyz:/home/cyn/Sites/minesweeper",
+    "build": "react-scripts build && scp -r ./build/* cyn@cynicade.xyz:/home/cyn/Sites/minesweeper",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

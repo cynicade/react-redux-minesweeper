@@ -1,6 +1,6 @@
 import { Button, Container, Grid, Typography } from "@mui/material";
 import React from "react";
-import { gameActions } from "../../app/gameSlice";
+import { gameActions } from "../game/gameSlice";
 import { useAppDispatch } from "../../app/hooks";
 
 export const Settings: React.FC = (): JSX.Element => {

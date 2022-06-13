@@ -3,7 +3,7 @@ import {
   gameActions,
   selectConnectionStatus,
   selectGameState,
-} from "../../app/gameSlice";
+} from "./gameSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Button, Typography, Grid as Flex } from "@mui/material";
 import { Grid } from "../grid/Grid";

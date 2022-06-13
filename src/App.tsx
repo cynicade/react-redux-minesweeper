@@ -5,10 +5,10 @@ import {
   gameActions,
   selectConnectionStatus,
   selectGameDifficulty,
-} from "./app/gameSlice";
+} from "./components/game/gameSlice";
 import theme from "./components/styles/theme";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Difficulty } from "./app/Grid";
+import { Difficulty } from "./components/grid/grid";
 import { Button, Container, Grid as Flex, ThemeProvider } from "@mui/material";
 import { Settings } from "./components/settings/Settings";
 import { Game } from "./components/game/Game";

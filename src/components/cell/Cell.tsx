@@ -6,7 +6,7 @@ import FlagIcon from "@mui/icons-material/Flag";
 import { Icon } from "@mui/material";
 import { css, jsx } from "@emotion/react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { gameActions, selectCells } from "../../app/gameSlice";
+import { gameActions, selectCells } from "../game/gameSlice";
 
 type PropsType = {
   x: number;
