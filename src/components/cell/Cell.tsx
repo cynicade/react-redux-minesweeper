@@ -43,7 +43,17 @@ export const Cell: React.FC<PropsType> = ({
     return (
       <div css={cellStyles}>
         {mine ? (
-          <Icon sx={{ width: "100%" }}>
+          <Icon
+            sx={{
+              width: "100%",
+              height: "100%",
+              backgroundColor: "primary.main",
+              color: "secondary.main",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Brightness7Icon />
           </Icon>
         ) : (
