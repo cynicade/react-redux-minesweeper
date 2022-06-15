@@ -1,10 +1,12 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import gameReducer from "../components/game/gameSlice";
+import roomReducer from "../components/room/roomSlice";
 import gameMiddleware from "../components/game/gameMiddleware";
 
 export const store = configureStore({
   reducer: {
     game: gameReducer,
+    room: roomReducer,
   },
   middleware: (getDefaultMiddleware) => {
     return getDefaultMiddleware().concat([gameMiddleware]);

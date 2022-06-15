@@ -5,6 +5,7 @@ import {
   gameActions,
   selectGameDifficulty,
   selectRoom,
+  selectMultiplayer,
 } from "./components/game/gameSlice";
 import theme from "./components/styles/theme";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -12,11 +13,13 @@ import { Difficulty } from "./types";
 import { Box, Button, Container, ThemeProvider } from "@mui/material";
 import { Settings } from "./components/settings/Settings";
 import { Game } from "./components/game/Game";
+import { Room } from "./components/room/Room";
 
 const App: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const diff: Difficulty | null = useAppSelector(selectGameDifficulty);
   const room: string | null = useAppSelector(selectRoom);
+  const multiplayer: boolean = useAppSelector(selectMultiplayer);
 
   React.useEffect(() => {
     const cleanup = () => {
@@ -37,6 +40,8 @@ const App: React.FC = (): JSX.Element => {
         <Settings />;
       </ThemeProvider>
     );
+
+  if (multiplayer) return <Room />;
 
   return (
     <ThemeProvider theme={theme}>
