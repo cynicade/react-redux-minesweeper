@@ -1,7 +1,11 @@
 import React from "react";
 
 import { useAppSelector, useAppDispatch } from "./app/hooks";
-import { gameActions, selectGameDifficulty } from "./components/game/gameSlice";
+import {
+  gameActions,
+  selectGameDifficulty,
+  selectRoom,
+} from "./components/game/gameSlice";
 import theme from "./components/styles/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Difficulty } from "./types";
@@ -12,15 +16,21 @@ import { Game } from "./components/game/Game";
 const App: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
   const diff: Difficulty | null = useAppSelector(selectGameDifficulty);
+  const room: string | null = useAppSelector(selectRoom);
 
   React.useEffect(() => {
+    const cleanup = () => {
+      room && dispatch(gameActions.leaveRoom());
+      dispatch(gameActions.terminateConnection());
+    };
+
     dispatch(gameActions.startConnecting());
     return () => {
-      dispatch(gameActions.terminateConnection());
+      window.addEventListener("beforeunload", cleanup);
     };
   }, [dispatch]);
 
-  if (diff === null)
+  if (diff === null && room === null)
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
