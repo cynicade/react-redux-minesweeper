@@ -5,5 +5,7 @@ namespace NodeJS {
     REACT_APP_SOCKET_URL_LOCAL: string;
     REACT_APP_SOCKET_PATH: string;
     REACT_APP_SOCKET_PATH_LOCAL: string;
+    REACT_APP_API_URL_LOCAL: string;
+    REACT_APP_API_URL: string;
   }
 }

@@ -25,6 +25,9 @@ const gameMiddleware: Middleware = (store) => {
       socket.on(gameEvents.NewGrid, (grid: IGrid) => {
         store.dispatch(gameActions.gotGrid({ grid }));
       });
+      socket.on(gameEvents.NewRoom, (roomId: string) => {
+        store.dispatch(gameActions.setRoom({ roomId }));
+      });
     }
 
     if (gameActions.getNewGrid.match(action)) {
@@ -36,6 +39,24 @@ const gameMiddleware: Middleware = (store) => {
     if (gameActions.terminateConnection.match(action)) {
       if (isConnectionEstablished) {
         socket.disconnect();
+      }
+    }
+
+    if (gameActions.joinRoom.match(action)) {
+      if (isConnectionEstablished) {
+        socket.emit(gameEvents.JoinRoom, store.getState().game.room);
+      }
+    }
+
+    if (gameActions.leaveRoom.match(action)) {
+      if (isConnectionEstablished) {
+        socket.emit(gameEvents.LeaveRoom, store.getState().game.room);
+      }
+    }
+
+    if (gameActions.createRoom.match(action)) {
+      if (isConnectionEstablished) {
+        socket.emit(gameEvents.CreateRoom);
       }
     }
 
