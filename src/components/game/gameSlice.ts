@@ -12,6 +12,7 @@ export interface GameState {
   startTime: number | null;
   totalTime: ITime | null;
   room: string | null;
+  multiplayer: boolean;
 }
 
 const initialState: GameState = {
@@ -24,6 +25,7 @@ const initialState: GameState = {
   startTime: null,
   totalTime: null,
   room: null,
+  multiplayer: false,
 };
 
 const stopTimer = (startTime: number): ITime => {
@@ -159,16 +161,18 @@ export const gameSlice = createSlice({
     },
     setRoom: (state, action: PayloadAction<{ roomId: string }>) => {
       state.room = action.payload.roomId;
+      state.multiplayer = true;
     },
     leaveRoom: (state) => {
       state.room = null;
+      state.multiplayer = false;
     },
   },
 });
 
 const getNewGrid = createAction("game/get_new_grid");
 const createRoom = createAction("game/create_room");
-const joinRoom = createAction("game/join_room")
+const joinRoom = createAction("game/join_room");
 
 export const selectConnectionStatus = (state: RootState) =>
   state.game.connectionStatus;
@@ -180,10 +184,11 @@ export const selectTotalTime = (state: RootState) => state.game.totalTime;
 export const selectMines = (state: RootState) => state.game.grid?.mines;
 export const selectFlagged = (state: RootState) => state.game.flaggedCellCount;
 export const selectRoom = (state: RootState) => state.game.room;
+export const selectMultiplayer = (state: RootState) => state.game.multiplayer;
 export const gameActions = {
   ...gameSlice.actions,
   getNewGrid,
   createRoom,
-  joinRoom
+  joinRoom,
 };
 export default gameSlice.reducer;
