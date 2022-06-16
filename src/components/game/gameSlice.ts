@@ -1,31 +1,26 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IGrid, ITime, Difficulty } from "../../types";
-import { RootState } from "../../app/store";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IGrid, ITime } from "../../types";
+import { RootState, store } from "../../app/store";
+import { game } from "./gameAPI";
 
 export interface GameState {
-  connectionStatus: "waiting" | "connecting" | "connection established";
   grid: IGrid | null;
+  gridStatus: "waiting" | "loading" | "succeeded" | "failed";
   gameStatus: "loss" | "win" | "idle" | "in progress" | null;
-  difficulty: Difficulty | null;
-  openedCellCount: number | null;
-  flaggedCellCount: number | null;
+  openedCellCount: number;
+  flaggedCellCount: number;
   startTime: number | null;
   totalTime: ITime | null;
-  room: string | null;
-  multiplayer: boolean;
 }
 
 const initialState: GameState = {
-  connectionStatus: "waiting",
   grid: null,
+  gridStatus: "waiting",
   gameStatus: null,
-  difficulty: null,
-  openedCellCount: null,
-  flaggedCellCount: null,
+  openedCellCount: 0,
+  flaggedCellCount: 0,
   startTime: null,
   totalTime: null,
-  room: null,
-  multiplayer: false,
 };
 
 const stopTimer = (startTime: number): ITime => {
@@ -46,28 +41,9 @@ export const gameSlice = createSlice({
   name: "game",
   initialState,
   reducers: {
-    startConnecting: (state) => {
-      state.connectionStatus = "connecting";
-    },
-    connectionEstablished: (state) => {
-      state.connectionStatus = "connection established";
-    },
-    terminateConnection: (state) => {
-      state.connectionStatus = "waiting";
-    },
-    gotGrid: (state, action: PayloadAction<{ grid: IGrid }>) => {
+    getGrid: (state, action: PayloadAction<{ grid: IGrid }>) => {
       state.grid = action.payload.grid;
       state.gameStatus = "idle";
-      state.openedCellCount = 0;
-      state.flaggedCellCount = 0;
-    },
-    selectDifficulty: (
-      state,
-      action: PayloadAction<{
-        difficulty: Difficulty;
-      }>
-    ) => {
-      state.difficulty = action.payload.difficulty;
     },
     openCell: (state, action: PayloadAction<{ x: number; y: number }>) => {
       if (state.gameStatus === "idle") {
@@ -138,57 +114,71 @@ export const gameSlice = createSlice({
     },
     flagCell: (state, action: PayloadAction<{ x: number; y: number }>) => {
       if (state.grid && state.grid.cells) {
+        // flip flag on cell
         state.grid.cells[action.payload.y][action.payload.x].flag =
           !state.grid.cells[action.payload.y][action.payload.x].flag;
-        if (state.flaggedCellCount !== null)
-          state.grid.cells[action.payload.y][action.payload.x].flag
-            ? state.flaggedCellCount++
-            : state.flaggedCellCount--;
-        if (state.flaggedCellCount !== null && state.openedCellCount !== null)
-          if (
-            state.openedCellCount ===
-              state.grid.sizeX * state.grid.sizeY - state.flaggedCellCount &&
-            state.flaggedCellCount === state.grid.mines
-          ) {
-            state.startTime && (state.totalTime = stopTimer(state.startTime));
-            state.gameStatus = "win";
-          }
+        // adjust flagged cell count appropriately
+        state.grid.cells[action.payload.y][action.payload.x].flag
+          ? state.flaggedCellCount++
+          : state.flaggedCellCount--;
+        // check win condition
+        if (
+          state.openedCellCount ===
+            state.grid.sizeX * state.grid.sizeY - state.flaggedCellCount &&
+          state.flaggedCellCount === state.grid.mines
+        ) {
+          state.startTime && (state.totalTime = stopTimer(state.startTime));
+          state.gameStatus = "win";
+        }
       }
     },
-    resetDifficulty: (state) => {
-      state.difficulty = null;
+    reset: (state) => {
       state.grid = null;
+      state.gridStatus = "waiting";
+      state.gameStatus = null;
+      state.openedCellCount = 0;
+      state.flaggedCellCount = 0;
+      state.startTime = null;
+      state.totalTime = null;
     },
-    setRoom: (state, action: PayloadAction<{ roomId: string }>) => {
-      state.room = action.payload.roomId;
-      state.multiplayer = true;
-    },
-    leaveRoom: (state) => {
-      state.room = null;
-      state.multiplayer = false;
-    },
+  },
+  extraReducers(builder) {
+    builder
+      .addCase(getNewGrid.pending, (state, _action) => {
+        state.gridStatus = "loading";
+        state.grid = null;
+        state.gameStatus = "idle";
+      })
+      .addCase(getNewGrid.fulfilled, (state, action) => {
+        state.gridStatus = "succeeded";
+        state.grid = action.payload;
+        state.gameStatus = "idle";
+      })
+      .addCase(getNewGrid.rejected, (state, _action) => {
+        state.gridStatus = "failed";
+        state.grid = null;
+        state.gameStatus = "idle";
+      });
   },
 });
 
-const getNewGrid = createAction("game/get_new_grid");
-const createRoom = createAction("game/create_room");
-const joinRoom = createAction("game/join_room");
+export const getNewGrid = createAsyncThunk("game/getNewGrid", async () => {
+  const diff = store.getState().app.difficulty;
+  if (diff) return (await game.getGrid(diff)) as IGrid;
 
-export const selectConnectionStatus = (state: RootState) =>
-  state.game.connectionStatus;
+  // TODO: handle errors
+  return null;
+});
+
 export const selectGrid = (state: RootState) => state.game.grid;
+export const selectGridStatus = (state: RootState) => state.game.gridStatus;
 export const selectCells = (state: RootState) => state.game.grid?.cells;
 export const selectGameState = (state: RootState) => state.game.gameStatus;
-export const selectGameDifficulty = (state: RootState) => state.game.difficulty;
 export const selectTotalTime = (state: RootState) => state.game.totalTime;
 export const selectMines = (state: RootState) => state.game.grid?.mines;
 export const selectFlagged = (state: RootState) => state.game.flaggedCellCount;
-export const selectRoom = (state: RootState) => state.game.room;
-export const selectMultiplayer = (state: RootState) => state.game.multiplayer;
 export const gameActions = {
   ...gameSlice.actions,
   getNewGrid,
-  createRoom,
-  joinRoom,
 };
 export default gameSlice.reducer;

@@ -15,19 +15,22 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { gameActions } from "../game/gameSlice";
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { roomActions } from "../room/roomSlice";
+import { appActions, selectMultiplayer } from "../../app/appSlice";
 
 export const Settings: React.FC = (): JSX.Element => {
-  const [roomMode, setRoomMode] = React.useState<boolean>(false);
   const [roomIdValue, setRoomIdValue] = React.useState<string>("");
   const [modalOpen, setModalOpen] = React.useState(false);
   const [alertOpen, setAlertOpen] = React.useState(false);
+  const multiplayer = useAppSelector(selectMultiplayer);
   const dispatch = useAppDispatch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const dirtyInput = e.target.value;
-    dirtyInput === "true" ? setRoomMode(true) : setRoomMode(false);
+    dirtyInput === "true"
+      ? dispatch(appActions.setMode({ multiplayer: true }))
+      : dispatch(appActions.setMode({ multiplayer: false }));
   };
 
   const handleRoomIdInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -53,8 +56,9 @@ export const Settings: React.FC = (): JSX.Element => {
       process.env.REACT_APP_API_URL_LOCAL + "/checkRoom/" + roomIdValue
     ).then((res) => {
       if (res.status === 200) {
-        dispatch(gameActions.setRoom({ roomId: roomIdValue }));
-        dispatch(gameActions.joinRoom());
+        dispatch(appActions.setMode({ multiplayer: true }));
+        dispatch(roomActions.startConnecting());
+        dispatch(roomActions.setRoomId({ roomId: roomIdValue }));
       } else setAlertOpen(true);
     });
   };
@@ -81,11 +85,8 @@ export const Settings: React.FC = (): JSX.Element => {
           <Button
             variant="contained"
             onClick={() => {
-              dispatch(
-                gameActions.selectDifficulty({ difficulty: "beginner" })
-              );
-              roomMode && dispatch(gameActions.createRoom());
-              dispatch(gameActions.getNewGrid());
+              dispatch(appActions.setDifficulty({ difficulty: "beginner" }));
+              if (multiplayer) dispatch(roomActions.createRoom());
             }}
           >
             Beginner
@@ -96,10 +97,9 @@ export const Settings: React.FC = (): JSX.Element => {
             variant="contained"
             onClick={() => {
               dispatch(
-                gameActions.selectDifficulty({ difficulty: "intermediate" })
+                appActions.setDifficulty({ difficulty: "intermediate" })
               );
-              roomMode && dispatch(gameActions.createRoom());
-              dispatch(gameActions.getNewGrid());
+              if (multiplayer) dispatch(roomActions.createRoom());
             }}
           >
             Intermediate
@@ -109,9 +109,8 @@ export const Settings: React.FC = (): JSX.Element => {
           <Button
             variant="contained"
             onClick={() => {
-              dispatch(gameActions.selectDifficulty({ difficulty: "expert" }));
-              roomMode && dispatch(gameActions.createRoom());
-              dispatch(gameActions.getNewGrid());
+              dispatch(appActions.setDifficulty({ difficulty: "expert" }));
+              if (multiplayer) dispatch(roomActions.createRoom());
             }}
           >
             Expert
@@ -133,7 +132,7 @@ export const Settings: React.FC = (): JSX.Element => {
               </Typography>
             </FormLabel>
             <RadioGroup
-              value={roomMode}
+              value={multiplayer}
               onChange={handleChange}
               name="radio-buttons-group"
               sx={{ display: "flex", flexDirection: "row" }}
