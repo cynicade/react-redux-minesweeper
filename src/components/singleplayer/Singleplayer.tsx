@@ -3,15 +3,16 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Game } from "../game/Game";
 import { Button, Container, Grid } from "@mui/material";
-import { appActions } from "../../app/appSlice";
 import {
   gameActions,
   selectGameState,
   selectGridStatus,
 } from "../game/gameSlice";
+import { useNavigate } from "react-router-dom";
 
 export const SinglePlayer: React.FC = (): JSX.Element => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const gameStatus = useAppSelector(selectGameState);
   const gridStatus = useAppSelector(selectGridStatus);
 
@@ -31,8 +32,8 @@ export const SinglePlayer: React.FC = (): JSX.Element => {
       <Button
         variant="contained"
         onClick={() => {
-          dispatch(appActions.backToMenu());
           dispatch(gameActions.reset());
+          navigate("/", { replace: true });
         }}
         sx={{
           position: "absolute",

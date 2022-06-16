@@ -1,10 +1,16 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAction,
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import { IGrid, IMember } from "../../types";
-import { RootState } from "../../app/store";
-import { getMembers } from "./roomAPI";
+import { RootState, store } from "../../app/store";
+import { room } from "./roomAPI";
 
 export interface GameState {
   connectionStatus: "waiting" | "connecting" | "connection established";
+  memberDataStatus: "waiting" | "loading" | "succeeded" | "failed";
   members: Array<IMember>;
   roundInProgress: boolean;
   roomId: string | null;
@@ -13,6 +19,7 @@ export interface GameState {
 
 const initialState: GameState = {
   connectionStatus: "waiting",
+  memberDataStatus: "waiting",
   members: [],
   roundInProgress: false,
   roomId: null,
@@ -38,10 +45,6 @@ export const roomSlice = createSlice({
     getGrid: (state, action: PayloadAction<{ grid: IGrid }>) => {
       state.grid = action.payload.grid;
     },
-    getMemberData: (state) => {
-      state.roomId &&
-        getMembers(state.roomId).then((members) => (state.members = members));
-    },
     startRoundIfReady: (state) => {
       const membersReady = state.members.filter(
         (member: IMember) => member.ready
@@ -56,16 +59,46 @@ export const roomSlice = createSlice({
       state.roomId = null;
     },
   },
+  extraReducers(builder) {
+    builder
+      .addCase(getMemberData.pending, (state, _action) => {
+        state.memberDataStatus = "loading";
+        state.members = [];
+      })
+      .addCase(getMemberData.fulfilled, (state, action) => {
+        state.memberDataStatus = "succeeded";
+        state.members = action.payload;
+      })
+      .addCase(getMemberData.rejected, (state, _action) => {
+        state.memberDataStatus = "failed";
+        state.members = [];
+      });
+  },
 });
+
+export const getMemberData = createAsyncThunk(
+  "room/getMemberData",
+  async () => {
+    const roomId = store.getState().room.roomId;
+    if (roomId) return (await room.getMembers(roomId)) as Array<IMember>;
+
+    // TODO: handle errors
+    return [];
+  }
+);
 
 const requestNewGrid = createAction("room/request_new_grid");
 const createRoom = createAction("room/create_room");
 
 export const selectMembers = (state: RootState) => state.room.members;
+export const selectMemberDataStatus = (state: RootState) =>
+  state.room.memberDataStatus;
 export const selectConnection = (state: RootState) =>
   state.room.connectionStatus;
+export const selectRoomId = (state: RootState) => state.room.roomId;
 export const roomActions = {
   ...roomSlice.actions,
+  getMemberData,
   requestNewGrid,
   createRoom,
 };

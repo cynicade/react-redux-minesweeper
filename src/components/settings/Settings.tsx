@@ -18,6 +18,7 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { roomActions } from "../room/roomSlice";
 import { appActions, selectMultiplayer } from "../../app/appSlice";
+import { useNavigate } from "react-router-dom";
 
 export const Settings: React.FC = (): JSX.Element => {
   const [roomIdValue, setRoomIdValue] = React.useState<string>("");
@@ -25,6 +26,7 @@ export const Settings: React.FC = (): JSX.Element => {
   const [alertOpen, setAlertOpen] = React.useState(false);
   const multiplayer = useAppSelector(selectMultiplayer);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const dirtyInput = e.target.value;
@@ -50,17 +52,17 @@ export const Settings: React.FC = (): JSX.Element => {
     setModalOpen(true);
   };
 
-  const handleJoin = (): void => {
+  const handleJoin = async (): Promise<void> => {
     setModalOpen(false);
-    fetch(
+    const res = await fetch(
       process.env.REACT_APP_API_URL_LOCAL + "/checkRoom/" + roomIdValue
-    ).then((res) => {
-      if (res.status === 200) {
-        dispatch(appActions.setMode({ multiplayer: true }));
-        dispatch(roomActions.startConnecting());
-        dispatch(roomActions.setRoomId({ roomId: roomIdValue }));
-      } else setAlertOpen(true);
-    });
+    );
+    if (res.status === 200) {
+      dispatch(appActions.setMode({ multiplayer: true }));
+      dispatch(roomActions.startConnecting());
+      dispatch(roomActions.setRoomId({ roomId: roomIdValue }));
+      navigate("/room", { replace: true });
+    } else setAlertOpen(true);
   };
 
   return (
@@ -86,7 +88,10 @@ export const Settings: React.FC = (): JSX.Element => {
             variant="contained"
             onClick={() => {
               dispatch(appActions.setDifficulty({ difficulty: "beginner" }));
-              if (multiplayer) dispatch(roomActions.createRoom());
+              if (multiplayer) {
+                dispatch(roomActions.createRoom());
+                navigate("/room", { replace: true });
+              } else navigate("/singleplayer", { replace: true });
             }}
           >
             Beginner
@@ -99,7 +104,10 @@ export const Settings: React.FC = (): JSX.Element => {
               dispatch(
                 appActions.setDifficulty({ difficulty: "intermediate" })
               );
-              if (multiplayer) dispatch(roomActions.createRoom());
+              if (multiplayer) {
+                dispatch(roomActions.createRoom());
+                navigate("/room", { replace: true });
+              } else navigate("/singleplayer", { replace: true });
             }}
           >
             Intermediate
@@ -110,7 +118,10 @@ export const Settings: React.FC = (): JSX.Element => {
             variant="contained"
             onClick={() => {
               dispatch(appActions.setDifficulty({ difficulty: "expert" }));
-              if (multiplayer) dispatch(roomActions.createRoom());
+              if (multiplayer) {
+                dispatch(roomActions.createRoom());
+                navigate("/room", { replace: true });
+              } else navigate("/singleplayer", { replace: true });
             }}
           >
             Expert
@@ -153,6 +164,7 @@ export const Settings: React.FC = (): JSX.Element => {
         <Grid item m="1em" xs={12}>
           <Button
             variant="outlined"
+            color="secondary"
             sx={{
               position: "relative",
               left: "50%",
