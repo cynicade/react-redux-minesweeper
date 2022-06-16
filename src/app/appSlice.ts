@@ -4,11 +4,13 @@ import { RootState } from "./store";
 
 export interface AppState {
   multiplayer: boolean;
+  joinRoom: boolean;
   difficulty: Difficulty | null;
 }
 
 const initialState: AppState = {
   multiplayer: false,
+  joinRoom: false,
   difficulty: null,
 };
 

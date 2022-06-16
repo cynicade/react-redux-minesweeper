@@ -11,7 +11,11 @@ const roomMiddleware: Middleware = (store) => {
     const isConnectionEstablished =
       socket &&
       store.getState().room.connectionStatus === "connection established";
-    if (roomActions.startConnecting.match(action)) {
+
+    if (
+      roomActions.createRoom.match(action) ||
+      roomActions.startConnecting.match(action)
+    ) {
       if (process.env.NODE_ENV === "development")
         socket = io(process.env.REACT_APP_SOCKET_URL_LOCAL, {
           path: process.env.REACT_APP_SOCKET_PATH_LOCAL,
@@ -22,6 +26,11 @@ const roomMiddleware: Middleware = (store) => {
         });
       socket.on("connect", () => {
         store.dispatch(roomActions.connectionEstablished());
+        if (roomActions.createRoom.match(action))
+          socket.emit(RoomEvents.CreateRoom, store.getState().app.difficulty);
+      });
+      socket.on(RoomEvents.NewRoom, (roomId: string) => {
+        store.dispatch(roomActions.setRoomId({ roomId }));
       });
       socket.on(RoomEvents.NewGrid, (grid: IGrid) => {
         store.dispatch(roomActions.getGrid({ grid }));
