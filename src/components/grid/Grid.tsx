@@ -21,7 +21,7 @@ export const Grid: React.FC = (): JSX.Element => {
   const cellSize = () => {
     switch (grid.sizeX) {
       case 8:
-        return "60px";
+        return "55px";
       default:
         return "45px";
     }

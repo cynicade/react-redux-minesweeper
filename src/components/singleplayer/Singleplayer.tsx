@@ -33,7 +33,7 @@ export const SinglePlayer: React.FC = (): JSX.Element => {
         variant="contained"
         onClick={() => {
           dispatch(gameActions.reset());
-          navigate("/", { replace: true });
+          navigate("/minesweeper", { replace: true });
         }}
         sx={{
           position: "absolute",
