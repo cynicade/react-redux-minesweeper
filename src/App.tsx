@@ -1,39 +1,20 @@
 import React from "react";
 
-import { useAppSelector, useAppDispatch } from "./app/hooks";
-import {
-  gameActions,
-  selectGameDifficulty,
-  selectRoom,
-  selectMultiplayer,
-} from "./components/game/gameSlice";
+import { useAppSelector } from "./app/hooks";
+import { selectDifficulty, selectMultiplayer } from "./app/appSlice";
 import theme from "./components/styles/theme";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Difficulty } from "./types";
-import { Box, Button, Container, ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 import { Settings } from "./components/settings/Settings";
-import { Game } from "./components/game/Game";
 import { Room } from "./components/room/Room";
+import SinglePlayer from "./components/singleplayer/Singleplayer";
+import { Difficulty } from "./types";
 
 const App: React.FC = (): JSX.Element => {
-  const dispatch = useAppDispatch();
-  const diff: Difficulty | null = useAppSelector(selectGameDifficulty);
-  const room: string | null = useAppSelector(selectRoom);
-  const multiplayer: boolean = useAppSelector(selectMultiplayer);
+  const multiplayer: boolean | null = useAppSelector(selectMultiplayer);
+  const difficulty: Difficulty | null = useAppSelector(selectDifficulty);
 
-  React.useEffect(() => {
-    const cleanup = () => {
-      room && dispatch(gameActions.leaveRoom());
-      dispatch(gameActions.terminateConnection());
-    };
-
-    dispatch(gameActions.startConnecting());
-    return () => {
-      window.addEventListener("beforeunload", cleanup);
-    };
-  }, [dispatch]);
-
-  if (diff === null && room === null)
+  if (!multiplayer && !difficulty)
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -41,34 +22,19 @@ const App: React.FC = (): JSX.Element => {
       </ThemeProvider>
     );
 
-  if (multiplayer) return <Room />;
+  if (multiplayer) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Room />
+      </ThemeProvider>
+    );
+  }
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container maxWidth="xl" sx={{ height: "100vh" }}>
-        <Button
-          variant="contained"
-          onClick={() => dispatch(gameActions.resetDifficulty())}
-          sx={{
-            position: "absolute",
-            right: "1em",
-            marginY: "1em",
-          }}
-        >
-          Change Difficulty
-        </Button>
-        <Box
-          component="div"
-          m="1"
-          position="absolute"
-          top="50%"
-          left="50%"
-          sx={{ transform: "translate(-50%, -50%)" }}
-        >
-          <Game />
-        </Box>
-      </Container>
+      <SinglePlayer />
     </ThemeProvider>
   );
 };

@@ -1,12 +1,13 @@
 import { Icon, IconButton, List, ListItem, ListItemText } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import React from "react";
-import { useAppSelector } from "../../app/hooks";
-import { selectMembers } from "./roomSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { roomActions, selectMembers } from "./roomSlice";
 import { IMember } from "../../types";
 
 export const Room: React.FC = (): JSX.Element => {
   const members = useAppSelector(selectMembers);
+  const dispatch = useAppDispatch();
 
   return (
     <List sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}>

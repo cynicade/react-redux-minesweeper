@@ -1,33 +1,20 @@
 import React from "react";
 import {
-  gameActions,
-  selectConnectionStatus,
   selectFlagged,
   selectGameState,
   selectMines,
   selectTotalTime,
 } from "./gameSlice";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Button, Typography, Grid as Flex, Icon } from "@mui/material";
+import { useAppSelector } from "../../app/hooks";
+import { Typography, Grid as Flex, Icon } from "@mui/material";
 import FlagIcon from "@mui/icons-material/Flag";
 import { Grid } from "../grid/Grid";
 
 export const Game: React.FC = (): JSX.Element => {
-  const dispatch = useAppDispatch();
-  const connection = useAppSelector(selectConnectionStatus);
   const gameState = useAppSelector(selectGameState);
   const totalTime = useAppSelector(selectTotalTime);
   const mines = useAppSelector(selectMines);
   const flagged = useAppSelector(selectFlagged);
-
-  if (connection !== "connection established")
-    return (
-      <div>
-        <Typography variant="h5" textAlign="center" color="secondary">
-          {connection}
-        </Typography>
-      </div>
-    );
 
   if (gameState === "loss" || gameState === "win")
     return (
@@ -52,14 +39,6 @@ export const Game: React.FC = (): JSX.Element => {
             </Typography>
           </Flex>
         )}
-        <Flex item marginTop="2em">
-          <Button
-            variant="contained"
-            onClick={() => dispatch(gameActions.getNewGrid())}
-          >
-            New Game
-          </Button>
-        </Flex>
       </Flex>
     );
 
