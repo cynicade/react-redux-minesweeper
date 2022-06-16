@@ -61,7 +61,7 @@ export const Settings: React.FC = (): JSX.Element => {
       dispatch(appActions.setMode({ multiplayer: true }));
       dispatch(roomActions.startConnecting());
       dispatch(roomActions.setRoomId({ roomId: roomIdValue }));
-      navigate("/room", { replace: true });
+      navigate("./room", { replace: true });
     } else setAlertOpen(true);
   };
 
@@ -90,8 +90,8 @@ export const Settings: React.FC = (): JSX.Element => {
               dispatch(appActions.setDifficulty({ difficulty: "beginner" }));
               if (multiplayer) {
                 dispatch(roomActions.createRoom());
-                navigate("/room", { replace: true });
-              } else navigate("/singleplayer", { replace: true });
+                navigate("./room", { replace: true });
+              } else navigate("./singleplayer", { replace: true });
             }}
           >
             Beginner
@@ -106,8 +106,8 @@ export const Settings: React.FC = (): JSX.Element => {
               );
               if (multiplayer) {
                 dispatch(roomActions.createRoom());
-                navigate("/room", { replace: true });
-              } else navigate("/singleplayer", { replace: true });
+                navigate("./room", { replace: true });
+              } else navigate("./singleplayer", { replace: true });
             }}
           >
             Intermediate
@@ -120,8 +120,8 @@ export const Settings: React.FC = (): JSX.Element => {
               dispatch(appActions.setDifficulty({ difficulty: "expert" }));
               if (multiplayer) {
                 dispatch(roomActions.createRoom());
-                navigate("/room", { replace: true });
-              } else navigate("/singleplayer", { replace: true });
+                navigate("./room", { replace: true });
+              } else navigate("./singleplayer", { replace: true });
             }}
           >
             Expert

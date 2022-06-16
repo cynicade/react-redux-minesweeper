@@ -13,9 +13,9 @@ const App: React.FC = (): JSX.Element => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Routes>
-        <Route path="/" element={<Settings />} />
-        <Route path="/singleplayer" element={<SinglePlayer />} />
-        <Route path="/room" element={<Room />} />
+        <Route path="/minesweeper" element={<Settings />} />
+        <Route path="/minesweeper/singleplayer" element={<SinglePlayer />} />
+        <Route path="/minesweeper/room" element={<Room />} />
       </Routes>
     </ThemeProvider>
   );
