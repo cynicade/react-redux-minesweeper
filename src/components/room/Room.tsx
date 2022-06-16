@@ -46,7 +46,7 @@ export const Room: React.FC = (): JSX.Element => {
         variant="contained"
         onClick={() => {
           dispatch(roomActions.leaveRoom());
-          navigate("/", { replace: true });
+          navigate("/minesweeper", { replace: true });
         }}
         sx={{
           position: "absolute",
