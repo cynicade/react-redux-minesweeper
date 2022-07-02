@@ -7,14 +7,9 @@ import { ICell } from "../../types";
 import { Cell } from "../cell/Cell";
 import { css, jsx } from "@emotion/react"; // need jsx for pragma
 import { Typography } from "@mui/material";
-import { selectMultiplayerGrid, selectRoomId } from "../room/roomSlice";
 
 export const Grid: React.FC = (): JSX.Element => {
-  const roomId = useAppSelector(selectRoomId);
-  const mpGrid = useAppSelector(selectMultiplayerGrid);
-  const spGrid = useAppSelector(selectGrid);
-
-  const grid = roomId ? mpGrid : spGrid; // if roomId is not null, we're in a multiplayer game
+  const grid = useAppSelector(selectGrid);
 
   if (!grid)
     return (
@@ -26,9 +21,9 @@ export const Grid: React.FC = (): JSX.Element => {
   const cellSize = () => {
     switch (grid.sizeX) {
       case 8:
-        return "55px";
+        return "3.5rem";
       default:
-        return "45px";
+        return "2.8rem";
     }
   };
 

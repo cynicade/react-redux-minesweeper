@@ -69,6 +69,8 @@ const requestNewGrid = createAction("room/request_new_grid");
 const createRoom = createAction("room/create_room");
 const joinRoom = createAction("room/join_room");
 const toggleReady = createAction("room/toggle_ready");
+const playerSolvedGrid = createAction("room/player_solved_grid");
+const playerLost = createAction("room/player_lost");
 
 export const selectMembers = (state: RootState) => state.room.members;
 export const selectConnection = (state: RootState) =>
@@ -84,5 +86,7 @@ export const roomActions = {
   createRoom,
   joinRoom,
   toggleReady,
+  playerSolvedGrid,
+  playerLost,
 };
 export default roomSlice.reducer;

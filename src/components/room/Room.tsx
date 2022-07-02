@@ -23,6 +23,7 @@ import {
 import { IMember } from "../../types";
 import { useNavigate } from "react-router-dom";
 import { Game } from "../game/Game";
+import MultiPlayer from "../multiplayer/Multiplayer";
 
 export const Room: React.FC = (): JSX.Element => {
   const members = useAppSelector(selectMembers);
@@ -125,35 +126,5 @@ export const Room: React.FC = (): JSX.Element => {
     );
 
   // if the round is in progress, render the game
-  return (
-    <Container maxWidth="xl" sx={{ height: "100vh" }}>
-      <Button
-        variant="contained"
-        onClick={() => {
-          dispatch(roomActions.leaveRoom());
-          navigate("/minesweeper", { replace: true });
-        }}
-        sx={{
-          position: "absolute",
-          right: "1em",
-          marginY: "1em",
-        }}
-      >
-        Back
-      </Button>
-      <Grid
-        container
-        position="absolute"
-        top="50%"
-        left="50%"
-        flexDirection="column"
-        alignItems="center"
-        sx={{ transform: "translate(-50%, -50%)" }}
-      >
-        <Grid item>
-          <Game />
-        </Grid>
-      </Grid>
-    </Container>
-  );
+  return <MultiPlayer />;
 };

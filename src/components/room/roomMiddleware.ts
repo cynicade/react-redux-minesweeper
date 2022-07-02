@@ -3,6 +3,8 @@ import { Socket, io } from "socket.io-client";
 import { roomActions } from "./roomSlice";
 import RoomEvents from "./roomEvents";
 import { IGrid, IMember } from "../../types";
+import { gameActions } from "../game/gameSlice";
+import { isContext } from "vm";
 
 const roomMiddleware: Middleware = (store) => {
   let socket: Socket;
@@ -39,7 +41,7 @@ const roomMiddleware: Middleware = (store) => {
         store.dispatch(roomActions.requestNewGrid());
       });
       socket.on(RoomEvents.NewGrid, (grid: IGrid) => {
-        store.dispatch(roomActions.getGrid({ grid }));
+        store.dispatch(gameActions.getGrid({ grid }));
       });
       socket.on(RoomEvents.MemberStateChanged, (members: Array<IMember>) => {
         store.dispatch(roomActions.setMembers({ members }));
@@ -49,7 +51,7 @@ const roomMiddleware: Middleware = (store) => {
 
     if (roomActions.requestNewGrid.match(action)) {
       if (isConnectionEstablished) {
-        socket.emit(RoomEvents.RequestGrid, store.getState().app.difficulty);
+        socket.emit(RoomEvents.RequestGrid, store.getState().room.roomId);
       }
     }
 
@@ -57,12 +59,25 @@ const roomMiddleware: Middleware = (store) => {
       if (isConnectionEstablished) {
         socket.emit(RoomEvents.LeaveRoom, store.getState().room.roomId);
         socket.disconnect();
+        store.dispatch(gameActions.reset());
       }
     }
 
     if (roomActions.toggleReady.match(action)) {
       if (isConnectionEstablished) {
         socket.emit(RoomEvents.PlayerToggleReady, store.getState().room.roomId);
+      }
+    }
+
+    if (roomActions.playerSolvedGrid.match(action)) {
+      if (isConnectionEstablished) {
+        socket.emit(RoomEvents.PlayerSolvedGrid, store.getState().room.roomId);
+      }
+    }
+
+    if (roomActions.playerLost.match(action)) {
+      if (isConnectionEstablished) {
+        socket.emit(RoomEvents.PlayerLost, store.getState().room.roomId);
       }
     }
 

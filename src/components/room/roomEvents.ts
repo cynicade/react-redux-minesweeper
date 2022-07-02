@@ -7,6 +7,8 @@ enum RoomEvents {
   MemberStateChanged = "member_state_changed",
   PlayerToggleReady = "player_toggle_ready",
   LeaveRoom = "leave_room",
+  PlayerSolvedGrid = "player_solved_grid",
+  PlayerLost = "player_lost",
 }
 
 export default RoomEvents;
