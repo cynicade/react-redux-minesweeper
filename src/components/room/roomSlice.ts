@@ -1,16 +1,10 @@
-import {
-  createAction,
-  createAsyncThunk,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IGrid, IMember } from "../../types";
-import { RootState, store } from "../../app/store";
-import { room } from "./roomAPI";
+import { RootState } from "../../app/store";
 
 export interface GameState {
   connectionStatus: "waiting" | "connecting" | "connection established";
-  memberDataStatus: "waiting" | "loading" | "succeeded" | "failed";
+  socketId: string | null;
   members: Array<IMember>;
   roundInProgress: boolean;
   roomId: string | null;
@@ -19,7 +13,7 @@ export interface GameState {
 
 const initialState: GameState = {
   connectionStatus: "waiting",
-  memberDataStatus: "waiting",
+  socketId: null,
   members: [],
   roundInProgress: false,
   roomId: null,
@@ -33,14 +27,18 @@ export const roomSlice = createSlice({
     startConnecting: (state) => {
       state.connectionStatus = "connecting";
     },
-    connectionEstablished: (state) => {
+    connectionEstablished: (
+      state,
+      action: PayloadAction<{ socketId: string }>
+    ) => {
       state.connectionStatus = "connection established";
-    },
-    terminateConnection: (state) => {
-      state.connectionStatus = "waiting";
+      state.socketId = action.payload.socketId;
     },
     setRoomId: (state, action: PayloadAction<{ roomId: string | null }>) => {
       action.payload.roomId && (state.roomId = action.payload.roomId);
+    },
+    setMembers: (state, action: PayloadAction<{ members: Array<IMember> }>) => {
+      state.members = action.payload.members;
     },
     getGrid: (state, action: PayloadAction<{ grid: IGrid }>) => {
       state.grid = action.payload.grid;
@@ -56,50 +54,35 @@ export const roomSlice = createSlice({
         state.roundInProgress = true;
     },
     leaveRoom: (state) => {
+      // reset back to the initial state
+      state.connectionStatus = "waiting";
+      state.socketId = null;
+      state.members = [];
+      state.roundInProgress = false;
       state.roomId = null;
+      state.grid = null;
     },
-  },
-  extraReducers(builder) {
-    builder
-      .addCase(getMemberData.pending, (state, _action) => {
-        state.memberDataStatus = "loading";
-        state.members = [];
-      })
-      .addCase(getMemberData.fulfilled, (state, action) => {
-        state.memberDataStatus = "succeeded";
-        state.members = action.payload;
-      })
-      .addCase(getMemberData.rejected, (state, _action) => {
-        state.memberDataStatus = "failed";
-        state.members = [];
-      });
   },
 });
 
-export const getMemberData = createAsyncThunk(
-  "room/getMemberData",
-  async () => {
-    const roomId = store.getState().room.roomId;
-    if (roomId) return (await room.getMembers(roomId)) as Array<IMember>;
-
-    // TODO: handle errors
-    return [];
-  }
-);
-
 const requestNewGrid = createAction("room/request_new_grid");
 const createRoom = createAction("room/create_room");
+const joinRoom = createAction("room/join_room");
+const toggleReady = createAction("room/toggle_ready");
 
 export const selectMembers = (state: RootState) => state.room.members;
-export const selectMemberDataStatus = (state: RootState) =>
-  state.room.memberDataStatus;
 export const selectConnection = (state: RootState) =>
   state.room.connectionStatus;
 export const selectRoomId = (state: RootState) => state.room.roomId;
+export const selectPlayerSocketId = (state: RootState) => state.room.socketId;
+export const selectRoundInProgress = (state: RootState) =>
+  state.room.roundInProgress;
+export const selectMultiplayerGrid = (state: RootState) => state.room.grid;
 export const roomActions = {
   ...roomSlice.actions,
-  getMemberData,
   requestNewGrid,
   createRoom,
+  joinRoom,
+  toggleReady,
 };
 export default roomSlice.reducer;

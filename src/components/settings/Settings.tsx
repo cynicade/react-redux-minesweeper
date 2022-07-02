@@ -59,8 +59,8 @@ export const Settings: React.FC = (): JSX.Element => {
     );
     if (res.status === 200) {
       dispatch(appActions.setMode({ multiplayer: true }));
-      dispatch(roomActions.startConnecting());
       dispatch(roomActions.setRoomId({ roomId: roomIdValue }));
+      dispatch(roomActions.joinRoom());
       navigate("./room", { replace: true });
     } else setAlertOpen(true);
   };

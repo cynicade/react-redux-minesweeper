@@ -2,7 +2,7 @@ import { Middleware } from "redux";
 import { Socket, io } from "socket.io-client";
 import { roomActions } from "./roomSlice";
 import RoomEvents from "./roomEvents";
-import { IGrid } from "../../types";
+import { IGrid, IMember } from "../../types";
 
 const roomMiddleware: Middleware = (store) => {
   let socket: Socket;
@@ -14,7 +14,8 @@ const roomMiddleware: Middleware = (store) => {
 
     if (
       roomActions.createRoom.match(action) ||
-      roomActions.startConnecting.match(action)
+      roomActions.startConnecting.match(action) ||
+      roomActions.joinRoom.match(action)
     ) {
       if (process.env.NODE_ENV === "development")
         socket = io(process.env.REACT_APP_SOCKET_URL_LOCAL, {
@@ -25,15 +26,24 @@ const roomMiddleware: Middleware = (store) => {
           path: process.env.REACT_APP_SOCKET_PATH,
         });
       socket.on("connect", () => {
-        store.dispatch(roomActions.connectionEstablished());
+        store.dispatch(
+          roomActions.connectionEstablished({ socketId: socket.id })
+        );
         if (roomActions.createRoom.match(action))
           socket.emit(RoomEvents.CreateRoom, store.getState().app.difficulty);
+        if (roomActions.joinRoom.match(action))
+          socket.emit(RoomEvents.JoinRoom, store.getState().room.roomId);
       });
       socket.on(RoomEvents.NewRoom, (roomId: string) => {
         store.dispatch(roomActions.setRoomId({ roomId }));
+        store.dispatch(roomActions.requestNewGrid());
       });
       socket.on(RoomEvents.NewGrid, (grid: IGrid) => {
         store.dispatch(roomActions.getGrid({ grid }));
+      });
+      socket.on(RoomEvents.MemberStateChanged, (members: Array<IMember>) => {
+        store.dispatch(roomActions.setMembers({ members }));
+        store.dispatch(roomActions.startRoundIfReady());
       });
     }
 
@@ -43,15 +53,16 @@ const roomMiddleware: Middleware = (store) => {
       }
     }
 
-    if (roomActions.terminateConnection.match(action)) {
+    if (roomActions.leaveRoom.match(action)) {
       if (isConnectionEstablished) {
+        socket.emit(RoomEvents.LeaveRoom, store.getState().room.roomId);
         socket.disconnect();
       }
     }
 
-    if (roomActions.leaveRoom.match(action)) {
+    if (roomActions.toggleReady.match(action)) {
       if (isConnectionEstablished) {
-        socket.emit(RoomEvents.LeaveRoom, store.getState().room.roomId);
+        socket.emit(RoomEvents.PlayerToggleReady, store.getState().room.roomId);
       }
     }
 

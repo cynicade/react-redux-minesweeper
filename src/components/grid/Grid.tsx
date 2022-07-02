@@ -7,9 +7,14 @@ import { ICell } from "../../types";
 import { Cell } from "../cell/Cell";
 import { css, jsx } from "@emotion/react"; // need jsx for pragma
 import { Typography } from "@mui/material";
+import { selectMultiplayerGrid, selectRoomId } from "../room/roomSlice";
 
 export const Grid: React.FC = (): JSX.Element => {
-  const grid = useAppSelector(selectGrid);
+  const roomId = useAppSelector(selectRoomId);
+  const mpGrid = useAppSelector(selectMultiplayerGrid);
+  const spGrid = useAppSelector(selectGrid);
+
+  const grid = roomId ? mpGrid : spGrid; // if roomId is not null, we're in a multiplayer game
 
   if (!grid)
     return (
