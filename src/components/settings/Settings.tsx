@@ -54,9 +54,11 @@ export const Settings: React.FC = (): JSX.Element => {
 
   const handleJoin = async (): Promise<void> => {
     setModalOpen(false);
-    const res = await fetch(
-      process.env.REACT_APP_API_URL_LOCAL + "/checkRoom/" + roomIdValue
-    );
+    const endpointUrl =
+      process.env.NODE_ENV === "development"
+        ? process.env.REACT_APP_API_URL_LOCAL
+        : process.env.REACT_APP_API_URL;
+    const res = await fetch(endpointUrl + "/checkRoom/" + roomIdValue);
     if (res.status === 200) {
       dispatch(appActions.setMode({ multiplayer: true }));
       dispatch(roomActions.setRoomId({ roomId: roomIdValue }));
