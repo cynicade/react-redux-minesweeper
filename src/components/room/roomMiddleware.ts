@@ -47,6 +47,9 @@ const roomMiddleware: Middleware = (store) => {
         store.dispatch(roomActions.setMembers({ members }));
         store.dispatch(roomActions.startRoundIfReady());
       });
+      socket.on(RoomEvents.RoundEnd, () => {
+        store.dispatch(roomActions.roundEnd());
+      });
     }
 
     if (roomActions.requestNewGrid.match(action)) {
@@ -70,6 +73,7 @@ const roomMiddleware: Middleware = (store) => {
     }
 
     if (roomActions.playerSolvedGrid.match(action)) {
+      store.dispatch(roomActions.roundEnd());
       if (isConnectionEstablished) {
         socket.emit(RoomEvents.PlayerSolvedGrid, store.getState().room.roomId);
       }

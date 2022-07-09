@@ -9,6 +9,7 @@ enum RoomEvents {
   LeaveRoom = "leave_room",
   PlayerSolvedGrid = "player_solved_grid",
   PlayerLost = "player_lost",
+  RoundEnd = "round_end",
 }
 
 export default RoomEvents;

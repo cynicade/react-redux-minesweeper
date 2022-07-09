@@ -62,6 +62,9 @@ export const roomSlice = createSlice({
       state.roomId = null;
       state.grid = null;
     },
+    roundEnd: (state) => {
+      state.roundInProgress = false;
+    },
   },
 });
 
