@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Container,
   Grid,
@@ -85,20 +86,33 @@ export const Room: React.FC = (): JSX.Element => {
 
                 if (member.socketId !== playerSocketId) {
                   primaryText = (
-                    <>
+                    <Grid container alignItems="center">
+                      <Grid item mr="1em">
+                        <Typography p={0} m={0}>
+                          {member.name}
+                        </Typography>
+                      </Grid>
                       {member.ready ? (
-                        <Icon>
-                          <CheckIcon />
-                        </Icon>
+                        <Grid item>
+                          <Typography color="primary" fontStyle="italic">
+                            ready
+                          </Typography>
+                        </Grid>
                       ) : (
-                        <Icon>
-                          <ClearIcon />
-                        </Icon>
-                      )}{" "}
-                      {member.name}
-                    </>
+                        <Grid item>
+                          <Typography color="primary" fontStyle="italic">
+                            not ready
+                          </Typography>
+                        </Grid>
+                      )}
+                    </Grid>
                   );
-                } else primaryText = member.name;
+                } else
+                  primaryText = (
+                    <Typography fontWeight="bold" color="primary">
+                      {member.name}
+                    </Typography>
+                  );
 
                 return (
                   <ListItem
